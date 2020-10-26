@@ -1,0 +1,132 @@
+apply plugin: 'installer-platform-plugin'
+apply plugin: 'installer-addon2-plugin'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+}
+
+ext {
+    workDir = "./work"
+}
+
+def platform = platform {
+    localProperties {
+        '# place your custom properties into this file instead of modifying the project.properties'
+        '# all properties in this file have higher priority and will overwrite the platform/project.properties settings.'
+
+        property '#mykey', '#myvalue'
+        property '#hac.webroot', '/hac'
+        property 'recaptcha.publickey', ''
+        property 'recaptcha.privatekey', ''
+        property 'googleApiKey', ''
+
+        property 'website.electronics.http', 'http://electronics.local:9001/yacceleratorstorefront'
+        property 'website.electronics.https', 'https://electronics.local:9002/yacceleratorstorefront'
+        property 'website.apparel-de.http', 'http://apparel-de.local:9001/yacceleratorstorefront'
+        property 'website.apparel-de.https', 'https://apparel-de.local:9002/yacceleratorstorefront'
+        property 'website.apparel-uk.http', 'http://apparel-uk.local:9001/yacceleratorstorefront'
+        property 'website.apparel-uk.https', 'https://apparel-uk.local:9002/yacceleratorstorefront'
+        property 'website.powertools.http', 'http://powertools.local:9001/yb2bacceleratorstorefront'
+        property 'website.powertools.https', 'https://powertools.local:9002/yb2bacceleratorstorefront'
+        property 'yb2bacceleratorstorefront.illegalrequirementstest.excluded', 'true'
+        property 'multicountrysampledataaddon.import.active', 'false'
+        property 'occ.rewrite.overlapping.paths.enabled', 'true' // for being able to run B2C & B2B alongside each other
+        property 'backoffice.solr.search.index.autoinit', 'false'
+    }
+
+    afterSetup {
+        ensureAdminPasswordSet()
+    }
+
+    extensions {
+    <%
+ 		@extensions.each do |extension|
+ 	%>
+ 		extName '<%= extension %>'
+ 	<% end %>
+ 	<% 
+    	@storefront.each do |storefront|
+    %>
+    	extName '<%= storefront['name'] %>'
+    <% end %>
+    }
+
+    addons {
+    <% 
+    	@storefront.each do |storefront|
+    %>
+        forStoreFronts('<%= storefront['name'] %>') {
+            names(
+            <%= 
+            	storefront['addons'].map { |addon| "'#{addon}'"}.join(',')
+           	%>
+           	)
+            template '<%= storefront['template'] %>'
+        }
+    <% end %>
+    }
+}
+
+task createStoreFrontExt {
+    doLast {
+        def prePlatform = platformFactory.createPlatform()
+        prePlatform.createConfigDirIfNotExist()
+        prePlatform.resetConfig()
+        def b2bPropFile
+        <% 
+    		@storefront.each do |storefront|
+    	%>
+        prePlatform.createExtension {
+            templateName '<%= storefront['template'] %>'
+            extensionName '<%= storefront['name'] %>'
+            packageName 'de.hybris.platform.<%= storefront['name'] %>'
+        }
+        b2bPropFile = "${suiteHome}/hybris/bin/custom/<%= storefront['name'] %>/project.properties"
+        ant.replace(file: b2bPropFile, token: "storefrontContextRoot", value: "b2bstorefrontContextRoot");
+        <% end %>
+    }
+}
+
+task setup(dependsOn: createStoreFrontExt) {
+    doLast {
+        platform.setup()
+    }
+}
+
+task buildSystem(dependsOn: setup) {
+    doLast {
+        platform.build()
+    }
+}
+
+task initialize(dependsOn: buildSystem) {
+    doLast {
+        platform.initialize()
+    }
+}
+
+task start {
+    doLast {
+        platform.start()
+    }
+}
+
+task startInBackground {
+    doLast {
+        platform.startInBackground()
+    }
+}
+
+task stopInBackground {
+    doLast {
+        platform.stopInBackground()
+    }
+}
+    
+
