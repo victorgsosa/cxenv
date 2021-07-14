@@ -79,6 +79,32 @@ module CXCommerceCookbook
       installer_dir = "#{hybris_dir}/installer"
       password = new_resource.password ? new_resource.password : "admin"
  
+      if new_resource.install_ip
+        ip_path = "/tmp/ip"
+        ip_remote_r = remote_file 'ip' do
+          path ip_path
+          source new_resource.ip_download_url
+          checksum new_resource.ip_download_checksum
+          not_if { ::File.exists?(ip_path) }
+          owner user.user
+          group user.group 
+          action :nothing
+        end
+
+
+        ip_remote_r.run_action(:create)
+        new_resource.updated_by_last_action(true) if ip_remote_r.updated_by_last_action?
+        if ip_remote_r.updated_by_last_action?
+          ip_unzip_r = execute 'extract_ip' do
+            command "unzip #{ip_path} -d #{hybris_dir}"
+            user user.user
+            group user.group
+            action :nothing
+          end
+          ip_unzip_r.run_action(:run)
+          new_resource.updated_by_last_action(true) if ip_unzip_r.updated_by_last_action?
+        end
+      end
 
       hybris_env = {'JAVA_HOME' => '/usr/lib/jvm/java-11-openjdk-amd64/'}
 

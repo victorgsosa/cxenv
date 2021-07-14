@@ -103,6 +103,7 @@ default['cxcomm']['extensions'] = [
     'warehousingfacades',
     'warehousingwebservices',
     'yacceleratorordermanagement',
+    'permissionswebservices',
     'personalizationcms',
     'personalizationcmsbackoffice',
     'personalizationcmsweb',
@@ -174,7 +175,11 @@ default['cxcomm']['extensions'] = [
     'cmsocc',
     'cmswebservices',
     'webservicescommons',
-    'ywebservices'
+    'ywebservices',
+        'gigyabackoffice',
+    'gigyafacades',
+    'gigyaservices',
+    'gigyaloginaddon'
 ]
 
 default['cxcomm']['storefront'] = [
@@ -194,7 +199,8 @@ default['cxcomm']['storefront'] = [
 			'multicountrysampledataaddon',
 			'pcmbackofficesamplesaddon',
 			'eventtrackingwsaddon',
-			'personalizationsearchsamplesaddon'
+			'personalizationsearchsamplesaddon',
+            'gigyaloginaddon'
 		]		
 	}
 	

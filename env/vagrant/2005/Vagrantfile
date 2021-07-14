@@ -6,8 +6,6 @@
 
     config.vm.box = "ubuntu/bionic64"
 
-    config.disksize.size = '20GB'
-
     config.vm.network :private_network, ip: '10.47.43.12'
 
     config.vm.synced_folder "../../../../installers", "/tmp/cx"
@@ -15,6 +13,7 @@
      config.vm.provider "virtualbox" do |vb|
       # Customize the amount of memory on the VM:
       vb.memory = "8192"
+      vb.cpus = 4
       vb.name = "cxcomm"
     end
 
