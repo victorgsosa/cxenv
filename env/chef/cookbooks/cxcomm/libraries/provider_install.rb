@@ -63,7 +63,7 @@ module CXCommerceCookbook
         #has_binaries ['bin/elasticsearch', 'bin/elasticsearch-plugin']
         checksum new_resource.download_checksum
         path   "#{new_resource.dir}"
-
+        strip_components 0
         not_if do
           target = "#{new_resource.dir}/hybris"
 
@@ -96,7 +96,7 @@ module CXCommerceCookbook
         new_resource.updated_by_last_action(true) if ip_remote_r.updated_by_last_action?
         if ip_remote_r.updated_by_last_action?
           ip_unzip_r = execute 'extract_ip' do
-            command "unzip #{ip_path} -d #{hybris_dir}"
+            command "unzip -o #{ip_path} -d #{hybris_dir}"
             user user.user
             group user.group
             action :nothing
