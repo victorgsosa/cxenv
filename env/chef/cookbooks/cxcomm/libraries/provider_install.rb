@@ -161,14 +161,14 @@ module CXCommerceCookbook
         end
 
         angular_cli_r = npm_package "@angular/cli" do
-          version 'v9-lts'
+          version 'v10-lts'
           action :nothing
         end
         angular_cli_r.run_action(:install)
         new_resource.updated_by_last_action(true) if angular_cli_r.updated_by_last_action?
 
         build_angular_cli_r = npm_package "@angular-devkit/build-angular" do
-          version 'v9-lts'
+          version 'v10-lts'
           options ['--save-dev']
           action :nothing
         end

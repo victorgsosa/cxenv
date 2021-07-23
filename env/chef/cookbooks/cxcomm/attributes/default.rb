@@ -4,6 +4,7 @@ default['cxcomm']['service'] = {}
 
 
 default['cxcomm']['extensions'] = [
+    'addonsupport',
 	'adaptivesearch',
     'adaptivesearchbackoffice',
     'adaptivesearchfacades',
@@ -152,6 +153,7 @@ default['cxcomm']['extensions'] = [
     'selectivecartsplitlistaddon',
     'cmssmartedit',
     'cmssmarteditwebservices',
+    'previewwebservices',
     'smartedit',
     'smarteditaddon',
     'smarteditwebservices',
@@ -184,7 +186,7 @@ default['cxcomm']['extensions'] = [
 
 default['cxcomm']['storefront'] = [
 	{
-		'name' => 'yb2bacceleratorstorefront',
+		'name' => 'demostore',
 		'template' => 'yacceleratorstorefront',
 		'addons' => [
 			'commerceorgsamplesaddon',
